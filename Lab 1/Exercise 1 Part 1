@@ -1,0 +1,140 @@
+#include "stdio.h"
+#include "stdbool.h"
+#include "stdlib.h"
+
+struct Matrix {
+    int rows,cols; // number of rows and columns
+    double** data; // 2 dimensional array (pointer contains address of first element of array of pointers to elements)
+};
+
+typedef struct Matrix Matrix;
+
+Matrix* create_matrix_obj(int n_rows, int n_cols) // create a new matrix object whenever is necessary
+{
+    struct Matrix* matrix = malloc(sizeof(Matrix));
+    matrix->rows = n_rows;
+    matrix->cols = n_cols;
+    double** data = malloc(sizeof(double*) * n_rows);
+    for(int x = 0; x < n_rows; x++) {
+        data[x] = calloc(n_cols, sizeof(double));
+    }
+    matrix->data = data;
+    return matrix;
+}
+
+Matrix* copy_matrix(double* data, int n_rows, int n_cols) // useful when using pre-predefined matricies on the code
+{
+    struct Matrix *matrix = create_matrix_obj(n_rows, n_cols);
+    for(int x = 0; x < n_rows; x++) {
+        for(int y = 0; y < n_cols; y++) {
+            matrix->data[x][y] = data[n_cols*x+y];
+        }
+    }
+    return matrix;
+}
+
+Matrix* multiply_matrix(Matrix* A, Matrix* B)
+{
+    double sum = 0;
+    Matrix* product = create_matrix_obj(A->rows,B->cols);
+    for (int i = 0; i < A->rows; i++) {
+        for (int j = 0; j < B->cols; j++) {
+            for (int k = 0; k < B->rows; k++) {
+                sum = sum + A->data[i][k] * B->data[k][j];
+            }
+            product->data[i][j] = sum;
+            sum = 0;
+        }
+    }
+    return product;
+}
+
+void edit_matrix(Matrix* X) // modify elements (doesn't change the dimensions)
+{
+    double elem;
+    for (int i=0;i<X->rows;i++) {
+        for (int j=0;j<X->cols;j++) {
+            printf("x%d%d: ",i+1,j+1);
+            scanf("%lf",&elem);
+            X->data[i][j] = elem;
+        }
+    }
+}
+
+void print_matrix(Matrix* m) // print a generic matrix
+{
+    for(int x = 0; x < m->rows; x++) {
+        printf("%s", "\n");
+        printf("| ");
+        for(int y = 0; y < m->cols; y++) {
+            printf("%.0f\t", m->data[x][y]);
+        }
+        printf("|");
+    }
+    printf(" %d x %d",m->rows,m->cols);
+    printf("\n");
+}
+
+bool matrices_are_compatible(Matrix* A,Matrix* B) // test the condition n = p in the Amxn*Bpxq operation
+{
+    if (A->cols == B->rows) {
+        return true;
+    } else {
+        return false;
+    }
+}
+
+void run_interface() // prints text and call other functions
+{
+    int m,n,p,q; // matrix dimensions
+
+    /* // predefined matrix
+    double a[] = {
+        1,2,3,
+        4,5,6,
+        7,8,9,
+        1,1,2
+    }; m = 4; n = 3;
+    */
+
+    /* // predefined matrix
+    double b[] = {
+        1,3,4,
+        2,3,3,
+        4,7,2
+    }; p = 3; q = 3;
+    */
+
+    printf("Enter matrix dimensions A[m x n] : ");
+    scanf("%d%d",&m,&n);
+    printf("Enter matrix dimensions B[p x q] : ");
+    scanf("%d%d",&p,&q);
+    printf("\n");
+
+    struct Matrix *m1 = create_matrix_obj(m,n);
+    struct Matrix *m2 = create_matrix_obj(p,q);
+
+    if (matrices_are_compatible(m1,m2)) {
+        printf("Enter first matrix's elements:\n");
+        //Matrix* m1 = copy_matrix(a,4,3);
+        edit_matrix(m1);
+        printf("Enter second matrix's elements:\n");
+        //Matrix* m2 = copy_matrix(b,3,3);
+        edit_matrix(m2);
+        printf("\nA =\n");
+        print_matrix(m1);
+        printf("\nB =\n");
+        print_matrix(m2);
+        struct Matrix *m3 = multiply_matrix(m1,m2);
+        printf("\nA x B =\n");
+        print_matrix(m3);
+    } else {
+        printf("\n[Error!] Matrices can't be multiplied.\n");
+    }
+}
+
+int main()
+{
+    run_interface();
+    return 0;
+}
