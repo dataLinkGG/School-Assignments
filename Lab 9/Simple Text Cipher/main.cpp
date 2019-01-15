@@ -73,7 +73,7 @@ void txt_decipher(string buffer, int key)
 	  cout << endl;
 }
 
-bool parse_option(int key) {
+bool process_input(int key) {
     string user_input;
     bool exit;
     system("clear");
@@ -109,4 +109,3 @@ void my_pause()
     cout << endl << "PRESS ENTER TO CONTINUE" << endl;
     getchar();
 }
-
