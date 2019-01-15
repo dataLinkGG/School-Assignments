@@ -8,7 +8,7 @@ void txt_cipher(string,int);
 void txt_decipher(string,int);
 void my_pause();
 bool is_a_num(const std::string&);
-bool parse_option(int);
+bool process_input(int);
 
 int main(int argc,char* argv[])
 {
@@ -16,13 +16,13 @@ int main(int argc,char* argv[])
     string user_input;
 
     if (argc == 2) {
-        parse_option(atoi(argv[1]));
+        process_input(atoi(argv[1]));
     } else {
         do {
             system("clear");
             cout << "Enter the cipher key [0 to exit]: ";
             getline(cin,user_input); key = atoi(user_input.c_str());
-        } while (parse_option(key) == false);
+        } while (process_input(key) == false);
     }
 
     return 0;
@@ -104,7 +104,8 @@ bool is_a_num(const std::string& str)
     return !str.empty() && it == str.end();
 }
 
-void my_pause() {
+void my_pause()
+{
     cout << endl << "PRESS ENTER TO CONTINUE" << endl;
     getchar();
 }
